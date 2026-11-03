@@ -1,8 +1,3 @@
-/* =====================================================================
-   04_consultas_exploratorias.sql
-   Sentencias SQL para la exploracion del informe (se piden 3 de 10).
-   Ejecutar cada una por separado y capturar el resultado en SSMS.
-   ===================================================================== */
 USE sakila;
 GO
 
