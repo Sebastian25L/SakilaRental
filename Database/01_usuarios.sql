@@ -1,15 +1,3 @@
-/* =====================================================================
-   01_usuarios.sql
-   Crea la tabla Usuarios (login + roles) y la puebla con usuarios de prueba.
-   Ejecutar sobre la base de datos sakila.
-   Las contrasenas se guardan con PBKDF2-SHA256 (Reto 1), nunca en texto plano.
-
-   Credenciales de prueba:
-     admin     / Admin123*     (rol Administrador)
-     cliente1  / Cliente123*   (rol Cliente, ligado al customer con menor id)
-     cliente2  / Cliente123*   (rol Cliente)
-     cliente3  / Cliente123*   (rol Cliente)
-   ===================================================================== */
 USE sakila;
 GO
 
@@ -17,8 +5,6 @@ IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL
     DROP TABLE dbo.Usuarios;
 GO
 
-/* El tipo de customer_id cambia segun el port de Sakila (int, smallint...),
-   por eso se lee de INFORMATION_SCHEMA y se construye la tabla dinamicamente. */
 DECLARE @tipo NVARCHAR(30);
 SELECT @tipo = DATA_TYPE
 FROM INFORMATION_SCHEMA.COLUMNS
@@ -39,11 +25,9 @@ CREATE TABLE dbo.Usuarios (
 EXEC sp_executesql @sql;
 GO
 
-/* Administrador (sin cliente asociado) */
 INSERT INTO dbo.Usuarios (nombre_usuario, password_hash, rol, customer_id)
 VALUES (N'admin', N'PBKDF2-SHA256$100000$qQF213toGt9hK/6mIBHilg==$Zl8d5xPpfrwM/vq2e2CZ8krmCMkgpI9/itkv7ViI7HE=', N'Administrador', NULL);
 
-/* Clientes ligados a los tres primeros customers existentes en Sakila */
 ;WITH c AS (
     SELECT TOP 3 customer_id, ROW_NUMBER() OVER (ORDER BY customer_id) AS n
     FROM dbo.customer ORDER BY customer_id
