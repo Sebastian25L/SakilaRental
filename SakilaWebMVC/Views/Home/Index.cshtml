@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="p-4 mb-4 bg-light rounded-3">
+    <h1 class="display-6 mb-0">Bienvenido, @Context.Session.Usuario()</h1>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h5 class="card-title">Catálogo</h5>
+            <p class="card-text">Explora las películas, revisa su disponibilidad y consulta el detalle.</p>
+            <a class="btn btn-primary" asp-controller="Peliculas" asp-action="Index">Ver catálogo</a>
+        </div></div>
+    </div>
+
+    @if (Context.Session.EsCliente())
+    {
+        <div class="col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Mis alquileres</h5>
+                <p class="card-text">Revisa tus alquileres activos y devuelve las películas.</p>
+                <a class="btn btn-success" asp-controller="Alquileres" asp-action="MisAlquileres">Ir a mis alquileres</a>
+            </div></div>
+        </div>
+    }
+
+    @if (Context.Session.EsAdministrador())
+    {
+        <div class="col-md-4">
+            <div class="card h-100"><div class="card-body">
+                <h5 class="card-title">Administración</h5>
+                <p class="card-text">Crea y edita películas, gestiona copias y revisa todos los alquileres.</p>
+                <a class="btn btn-warning" asp-controller="Peliculas" asp-action="Crear">Nueva película</a>
+                <a class="btn btn-outline-dark" asp-controller="Alquileres" asp-action="Todos">Alquileres</a>
+            </div></div>
+        </div>
+    }
+
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h5 class="card-title">Reporte</h5>
+            <p class="card-text">Las 10 películas con más alquileres en el historial.</p>
+            <a class="btn btn-outline-primary" asp-controller="Reportes" asp-action="PeliculasMasAlquiladas">Ver reporte</a>
+        </div></div>
+    </div>
+</div>

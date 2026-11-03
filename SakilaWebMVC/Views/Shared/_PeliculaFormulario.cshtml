@@ -1,0 +1,54 @@
+@model Pelicula
+@* Partial reutilizada por Crear y Editar *@
+<input type="hidden" asp-for="FilmId" />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="row g-3">
+    <div class="col-md-8">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="LanguageId" class="form-label"></label>
+        <select asp-for="LanguageId" asp-items="(SelectList)ViewBag.Idiomas" class="form-select">
+            <option value="">-- Seleccione --</option>
+        </select>
+        <span asp-validation-for="LanguageId" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="ReleaseYear" class="form-label"></label>
+        <input asp-for="ReleaseYear" class="form-control" />
+        <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="Rating" class="form-label"></label>
+        <select asp-for="Rating" asp-items="(SelectList)ViewBag.Ratings" class="form-select"></select>
+        <span asp-validation-for="Rating" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="Length" class="form-label"></label>
+        <input asp-for="Length" class="form-control" />
+        <span asp-validation-for="Length" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="RentalDuration" class="form-label"></label>
+        <input asp-for="RentalDuration" class="form-control" />
+        <span asp-validation-for="RentalDuration" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="RentalRate" class="form-label"></label>
+        <input asp-for="RentalRate" class="form-control" />
+        <span asp-validation-for="RentalRate" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="ReplacementCost" class="form-label"></label>
+        <input asp-for="ReplacementCost" class="form-control" />
+        <span asp-validation-for="ReplacementCost" class="text-danger"></span>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+@model InventarioViewModel
+@{
+    ViewData["Title"] = "Copias de " + Model.Pelicula.Title;
+}
+
+<h1 class="h3">Copias de «@Model.Pelicula.Title»</h1>
+<p class="text-muted">
+    Total: @Model.Copias.Count · Disponibles: @Model.Copias.Count(c => c.Disponible)
+    · <partial name="_Disponibilidad" model="Model.Pelicula" />
+</p>
+
+<form asp-action="Agregar" method="post" class="mb-3">
+    <input type="hidden" name="filmId" value="@Model.Pelicula.FilmId" />
+    <button type="submit" class="btn btn-success">Agregar copia</button>
+    <a class="btn btn-secondary" asp-controller="Peliculas" asp-action="Index">Volver al catálogo</a>
+</form>
+
+@if (!Model.Copias.Any())
+{
+    <div class="alert alert-warning">Esta película aún no tiene copias en el inventario.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>ID copia</th><th>Tienda</th><th>Estado</th><th>Alquilada por</th><th></th></tr>
+        </thead>
+        <tbody>
+        @foreach (Copia c in Model.Copias)
+        {
+            <tr>
+                <td>@c.InventoryId</td>
+                <td>@c.StoreId</td>
+                <td>
+                    @if (c.Disponible) { <span class="badge bg-success">Disponible</span> }
+                    else { <span class="badge bg-danger">Alquilada</span> }
+                </td>
+                <td>@(c.ClienteActual ?? "—")</td>
+                <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger"
+                            data-bs-toggle="modal" data-bs-target="#modalCopia"
+                            data-inv="@c.InventoryId">Eliminar</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<!-- Modal de confirmación (Bootstrap) -->
+<div class="modal fade" id="modalCopia" tabindex="-1" aria-labelledby="modalCopiaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCopiaLabel">Eliminar copia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que deseas eliminar la copia <strong id="copiaNumero"></strong> del inventario?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Eliminar" method="post" class="d-inline">
+                    <input type="hidden" name="inventoryId" id="copiaId" />
+                    <input type="hidden" name="filmId" value="@Model.Pelicula.FilmId" />
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('modalCopia').addEventListener('show.bs.modal', function (e) {
+            var inv = e.relatedTarget.getAttribute('data-inv');
+            document.getElementById('copiaId').value = inv;
+            document.getElementById('copiaNumero').textContent = '#' + inv;
+        });
+    </script>
+}

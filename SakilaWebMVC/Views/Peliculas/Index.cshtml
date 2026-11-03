@@ -1,0 +1,124 @@
+@model PeliculasIndexViewModel
+@{
+    ViewData["Title"] = "Catálogo";
+    string[] ratings = (string[])ViewBag.Ratings;
+    bool admin = Context.Session.EsAdministrador();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Catálogo de películas</h1>
+    @if (admin)
+    {
+        <a class="btn btn-warning" asp-action="Crear">Nueva película</a>
+    }
+</div>
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="busqueda" value="@Model.Busqueda" class="form-control" placeholder="Buscar por título" />
+    </div>
+    <div class="col-md-3">
+        <select name="rating" class="form-select">
+            <option value="">Todas las clasificaciones</option>
+            @foreach (string r in ratings)
+            {
+                <option value="@r" selected="@(r == Model.Rating)">@r</option>
+            }
+        </select>
+    </div>
+    @if (admin)
+    {
+        <div class="col-md-2 d-flex align-items-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="verInactivas" value="true" id="verInactivas" checked="@Model.VerInactivas" />
+                <label class="form-check-label" for="verInactivas">Ver dadas de baja</label>
+            </div>
+        </div>
+    }
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+    </div>
+</form>
+
+<p class="text-muted">@Model.TotalRegistros película(s) encontrada(s)</p>
+
+@if (!Model.Peliculas.Any())
+{
+    <div class="alert alert-info">No se encontraron películas con esos filtros.</div>
+}
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+    @foreach (Pelicula p in Model.Peliculas)
+    {
+        <div class="col">
+            <div class="card h-100 @(p.Activo ? "" : "border-secondary bg-light")">
+                <div class="card-body">
+                    <h5 class="card-title">@p.Title</h5>
+                    <p class="mb-1">
+                        <span class="badge bg-dark">@p.Rating</span>
+                        <span class="text-muted small">@p.LanguageName · @p.ReleaseYear</span>
+                    </p>
+                    <p class="mb-2">Tarifa: <strong>$@p.RentalRate.ToString("0.00")</strong></p>
+                    <partial name="_Disponibilidad" model="p" />
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a class="btn btn-sm btn-primary" asp-action="Detalle" asp-route-id="@p.FilmId">Detalle</a>
+                    @if (admin)
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@p.FilmId">Editar</a>
+                        <a class="btn btn-sm btn-outline-dark" asp-controller="Inventario" asp-action="Index" asp-route-filmId="@p.FilmId">Copias</a>
+                        if (p.Activo)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                    data-bs-toggle="modal" data-bs-target="#modalBaja"
+                                    data-id="@p.FilmId" data-titulo="@p.Title">Dar de baja</button>
+                        }
+                        else
+                        {
+                            <form asp-action="Restaurar" asp-route-id="@p.FilmId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Restaurar</button>
+                            </form>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="mt-4">
+    <partial name="_Paginacion" model="Model" />
+</div>
+
+<!-- Modal de confirmación (Bootstrap) -->
+<div class="modal fade" id="modalBaja" tabindex="-1" aria-labelledby="modalBajaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalBajaLabel">Confirmar baja</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que deseas dar de baja la película <strong id="bajaTitulo"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Desactivar" method="post" class="d-inline">
+                    <input type="hidden" name="id" id="bajaId" />
+                    <button type="submit" class="btn btn-danger">Sí, dar de baja</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Pasa el id y el título de la película al modal antes de abrirlo
+        document.getElementById('modalBaja').addEventListener('show.bs.modal', function (e) {
+            var boton = e.relatedTarget;
+            document.getElementById('bajaId').value = boton.getAttribute('data-id');
+            document.getElementById('bajaTitulo').textContent = boton.getAttribute('data-titulo');
+        });
+    </script>
+}

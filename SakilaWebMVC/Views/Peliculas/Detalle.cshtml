@@ -1,0 +1,52 @@
+@model Pelicula
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Catálogo</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+    </ol>
+</nav>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+            <h1 class="h3">@Model.Title</h1>
+            <partial name="_Disponibilidad" model="Model" />
+        </div>
+        <p class="text-muted">@(Model.Description ?? "Sin descripción")</p>
+
+        <dl class="row">
+            <dt class="col-sm-3">Clasificación</dt><dd class="col-sm-9">@Model.Rating</dd>
+            <dt class="col-sm-3">Idioma</dt><dd class="col-sm-9">@Model.LanguageName</dd>
+            <dt class="col-sm-3">Año de estreno</dt><dd class="col-sm-9">@Model.ReleaseYear</dd>
+            <dt class="col-sm-3">Duración</dt><dd class="col-sm-9">@(Model.Length.HasValue ? Model.Length + " min" : "—")</dd>
+            <dt class="col-sm-3">Días de alquiler</dt><dd class="col-sm-9">@Model.RentalDuration</dd>
+            <dt class="col-sm-3">Tarifa</dt><dd class="col-sm-9">$@Model.RentalRate.ToString("0.00")</dd>
+            <dt class="col-sm-3">Copias</dt><dd class="col-sm-9">@Model.Disponibles disponibles de @Model.Copias</dd>
+        </dl>
+
+        @if (Context.Session.EsCliente())
+        {
+            if (Model.Activo && Model.Disponibles > 0)
+            {
+                <form asp-controller="Alquileres" asp-action="Rentar" method="post" class="d-inline">
+                    <input type="hidden" name="filmId" value="@Model.FilmId" />
+                    <button type="submit" class="btn btn-success">Alquilar</button>
+                </form>
+            }
+            else
+            {
+                <button type="button" class="btn btn-secondary" disabled>No disponible para alquilar</button>
+            }
+        }
+        @if (Context.Session.EsAdministrador())
+        {
+            <a class="btn btn-outline-secondary" asp-action="Editar" asp-route-id="@Model.FilmId">Editar</a>
+            <a class="btn btn-outline-dark" asp-controller="Inventario" asp-action="Index" asp-route-filmId="@Model.FilmId">Gestionar copias</a>
+        }
+        <a class="btn btn-link" asp-action="Index">Volver al catálogo</a>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+@model List<PeliculaTop>
+@{
+    ViewData["Title"] = "Películas más alquiladas";
+    int max = Model.Any() ? Model.Max(p => p.VecesAlquilada) : 1;
+    int puesto = 0;
+}
+
+<h1 class="h3 mb-3">Top 10: películas más alquiladas</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Todavía no hay alquileres para generar el reporte.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th style="width:60px">#</th><th>Película</th><th style="width:120px">Alquileres</th><th style="width:35%"></th></tr>
+        </thead>
+        <tbody>
+        @foreach (PeliculaTop p in Model)
+        {
+            puesto++;
+            <tr>
+                <td>@puesto</td>
+                <td><a asp-controller="Peliculas" asp-action="Detalle" asp-route-id="@p.FilmId">@p.Title</a></td>
+                <td><strong>@p.VecesAlquilada</strong></td>
+                <td>
+                    <div class="progress" role="progressbar" aria-label="Alquileres de @p.Title">
+                        <div class="progress-bar" style="width:@((p.VecesAlquilada * 100) / max)%"></div>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

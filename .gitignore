@@ -1,0 +1,10 @@
+## Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.log
+
+## Credenciales locales (NO subir al repositorio)
+SakilaWebMVC/appsettings.Development.json

@@ -1,0 +1,42 @@
+@model List<Alquiler>
+@{
+    ViewData["Title"] = "Todos los alquileres";
+}
+
+<h1 class="h3 mb-1">Todos los alquileres</h1>
+<p class="text-muted">Últimos 100 registros del sistema.</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No hay alquileres registrados.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>#</th><th>Cliente</th><th>Película</th><th>Alquilada</th><th>Devuelta</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+        @foreach (Alquiler a in Model)
+        {
+            <tr>
+                <td>@a.RentalId</td>
+                <td>@a.Cliente</td>
+                <td>@a.Title</td>
+                <td>@a.RentalDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@(a.ReturnDate?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                <td><span class="badge @(a.Activo ? "bg-warning text-dark" : "bg-success")">@a.Estado</span></td>
+                <td class="text-end">
+                    @if (a.Activo)
+                    {
+                        <form asp-action="Devolver" method="post" class="d-inline">
+                            <input type="hidden" name="rentalId" value="@a.RentalId" />
+                            <button type="submit" class="btn btn-sm btn-primary">Registrar devolución</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

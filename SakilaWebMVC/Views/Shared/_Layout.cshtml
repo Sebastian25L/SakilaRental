@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sakila Rental</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SakilaWebMVC.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Sakila Rental</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+                        aria-controls="menuPrincipal" aria-expanded="false" aria-label="Mostrar menú">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="menuPrincipal">
+                    @if (Context.Session.Usuario() != null)
+                    {
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Peliculas" asp-action="Index">Catálogo</a>
+                            </li>
+                            @if (Context.Session.EsCliente())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Alquileres" asp-action="MisAlquileres">Mis alquileres</a>
+                                </li>
+                            }
+                            @if (Context.Session.EsAdministrador())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Peliculas" asp-action="Crear">Nueva película</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Alquileres" asp-action="Todos">Todos los alquileres</a>
+                                </li>
+                            }
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Reportes" asp-action="PeliculasMasAlquiladas">Más alquiladas</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav me-auto"></ul>
+                    }
+                    <partial name="_UsuarioNav" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            <partial name="_Mensajes" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - Sakila Rental - Desarrollo Web
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

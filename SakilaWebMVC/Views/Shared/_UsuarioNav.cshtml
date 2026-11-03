@@ -1,0 +1,15 @@
+@* Partial: usuario en sesion, rol y boton de salir/entrar *@
+@if (Context.Session.Usuario() != null)
+{
+    <span class="navbar-text me-3 text-white">
+        <strong>@Context.Session.Usuario()</strong>
+        <span class="badge @(Context.Session.EsAdministrador() ? "bg-warning text-dark" : "bg-info text-dark")">@Context.Session.Rol()</span>
+    </span>
+    <form asp-controller="Acceso" asp-action="Logout" method="post" class="d-inline">
+        <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>
+    </form>
+}
+else
+{
+    <a asp-controller="Acceso" asp-action="Login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
+}
