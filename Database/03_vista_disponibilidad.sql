@@ -1,8 +1,3 @@
-/* =====================================================================
-   03_vista_disponibilidad.sql
-   Vista con el estado de cada copia: una copia esta DISPONIBLE si no tiene
-   ningun alquiler abierto (return_date IS NULL).
-   ===================================================================== */
 USE sakila;
 GO
 
